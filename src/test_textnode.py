@@ -63,6 +63,13 @@ class TestTextNode(unittest.TestCase):
             html_node = text_node_to_html_node(node)
         self.assertEqual(str(raised.exception), "invalid TextType")
 
+    def test_image(self):
+        node = TextNode("Am I AN IMAGE?", TextType.IMG, "the_src")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, '')
+        self.assertEqual(html_node.props, {'src': 'the_src', 'alt': 'Am I AN IMAGE?'})
+        self.assertEqual(html_node.to_html(), '<img src="the_src" alt="Am I AN IMAGE?">')
 
 if __name__ == "__main__":
     unittest.main()

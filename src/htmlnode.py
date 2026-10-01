@@ -10,12 +10,14 @@ class HTMLNode:
     def __init__(self, tag: str|None = None,
         value: str|None = None,
         children: list[HTMLNode]|None = None,
-        props: dict[str, str]|None = None) -> None:
+        props: dict[str, str]|None = None,
+        no_close: bool = False) -> None:
 
         self.tag = tag
         self.value = value
         self.children = children
         self.props = props
+        self.no_close = no_close
 
     def to_html(self):
         # should raise a not implemented errror if not overridden
@@ -32,6 +34,12 @@ class HTMLNode:
 
         return formatted
 
+    def close_tag_to_html(self):
+        if self.no_close == True:
+            return ''
+        else:
+            return f'</{self.tag}>'
+
     def __eq__(self, other):
         if isinstance(other, HTMLNode):
             if (self.tag == other.tag and
@@ -43,7 +51,7 @@ class HTMLNode:
         return False
 
     def __repr__(self):
-        representation = f'HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})'
+        representation = f'HTMLNode({self.tag}, {self.value}, {self.children}, {self.props}, {self.no_close})'
         if self.value is not None and self.children is not None:
             representation = representation + '\nError: value or children'
         if self.props is not None and self.tag is None:
@@ -53,9 +61,10 @@ class HTMLNode:
 class LeafNode(HTMLNode):
     def __init__(self, tag: str|None,
         value: str,
-        props: dict[str, str]|None = None) -> None:
+        props: dict[str, str]|None = None,
+        no_close: bool = False) -> None:
 
-        super().__init__(tag, value, None, props)
+        super().__init__(tag, value, None, props, no_close)
 
     @override
     def to_html(self):
@@ -72,11 +81,12 @@ class LeafNode(HTMLNode):
             return self.value
         else:
             props = self.props_to_html()
-            return f'<{self.tag}{props}>{self.value}</{self.tag}>'
+            end_html = self.close_tag_to_html()
+            return f'<{self.tag}{props}>{self.value}{end_html}'
 
     @override
     def __repr__(self):
-        representation = f'LeafNode(HTMLNode)({self.tag}, {self.value}, {self.props})'
+        representation = f'LeafNode(HTMLNode)({self.tag}, {self.value}, {self.props}, {self.no_close})'
         if self.props is not None and self.tag is None:
             representation = representation + '\nError: orphan properties'
         return representation
@@ -101,7 +111,7 @@ class ParentNode(HTMLNode):
 
         props = self.props_to_html()
         start_html = f'<{self.tag}{props}>'
-        end_html = f'</{self.tag}>'
+        end_html = self.close_tag_to_html()
         child_html = ''
 
         # recursive
@@ -116,7 +126,7 @@ class ParentNode(HTMLNode):
 
     @override
     def __repr__(self):
-        representation = f'ParentNode(HTMLNode)({self.tag}, {self.children}, {self.props})'
+        representation = f'ParentNode(HTMLNode)({self.tag}, {self.children}, {self.props}, {self.no_close})'
         if self.tag is None:
             representation = representation + '\nError: tag required'
         if self.children is None:
