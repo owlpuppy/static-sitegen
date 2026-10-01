@@ -1,4 +1,13 @@
 #static-sitegen src/text_textnode
+#
+#
+#
+#
+#
+#
+#
+#
+#
 
 import unittest
 from textnode import TextType, TextNode, text_node_to_html_node
@@ -10,9 +19,9 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a text node", TextType.BOLD)
         self.assertEqual(node, node2)
 
-    def test_textnode_is_plain(self):
-        node = TextNode("This is another text node", TextType.PLAIN)
-        node2 = TextNode("This is another text node", TextType.PLAIN)
+    def test_textnode_is_text(self):
+        node = TextNode("This is another text node", TextType.TEXT)
+        node2 = TextNode("This is another text node", TextType.TEXT)
         self.assertEqual(node, node2)
 
     def test_textnode_link_different(self):
@@ -36,7 +45,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(node, node2)
 
     def test_text(self):
-        node = TextNode("This is a text node", TextType.PLAIN)
+        node = TextNode("This is a text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         self.assertEqual(html_node.value, "This is a text node")

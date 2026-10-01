@@ -4,12 +4,12 @@ from enum import Enum
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TextType(Enum):
-    PLAIN = 'inline_txt'
-    BOLD = 'inline_bold'
-    ITALIC = 'inline_italic'
-    CODE = 'inline_code'
-    LINK = 'inline_link'
-    IMG =  'inline_img'
+    TEXT = 'text'
+    BOLD = 'bold'
+    ITALIC = 'italic'
+    CODE = 'code'
+    LINK = 'link'
+    IMG =  'img'
 
 class TextNode:
     def __init__(self, text: str, text_type: TextType, url: str|None = None) -> None:
@@ -37,7 +37,7 @@ class TextNode:
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
-        case TextType.PLAIN:
+        case TextType.TEXT:
             return LeafNode(None, text_node.text)
         case TextType.BOLD:
             return LeafNode("b", text_node.text)
