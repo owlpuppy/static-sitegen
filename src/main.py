@@ -2,7 +2,7 @@
 #
 from textnode import TextType, TextNode, text_node_to_html_node
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from convert_markdown import split_nodes_delimiter
+from convert_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
 
 def main():
 
@@ -31,6 +31,21 @@ def main():
     node = TextNode("This is text with a `code block` word", TextType.TEXT)
     new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
     print(new_nodes)
+
+    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    print(f'images: {extract_markdown_images(text)}')
+
+    text2 = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+    print(f'links: {extract_markdown_links(text2)}')
+
+    splitnodes = []
+    splitnodes.append(TextNode("![This is alt text.](http://address.org/image.gif) I wish I didn't have to write so many ![more](path/to/image.jpg) tests. This [link](to-this-address)![shouldn't get picked up](another.png).", TextType.TEXT))
+    splitnodes.append(TextNode("I wonder if this will also work. ![This is alt text.](http://address.org/image.gif) I wish I didn't have to write so many ![more](path/to/image.jpg) tests. This [link](to-this-address)![shouldn't get picked up](another.png). Neither Should this.", TextType.TEXT))
+    splitnodes.append(TextNode("![This is alt text.](http://address.org/image.gif)![more](path/to/image.jpg)[link](to-this-address)![shouldn't get picked up](another.png)", TextType.TEXT))
+    splitnodes.append(TextNode("![This is alt text.](http://address.org/image.gif)![more](path/to/image.jpg)![shouldn't get picked up](another.png)", TextType.TEXT))
+    result = split_nodes_image(splitnodes)
+    for item in result:
+        print(f'{item}')
 
 if __name__ == "__main__":
     main()

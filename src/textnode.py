@@ -28,10 +28,6 @@ class TextNode:
 
     def __repr__(self):
         representation = f'TextNode({self.text}, {self.text_type.value}, {self.url})'
-        if self.url is not None and self.text_type is not (TextType.LINK or TextType.url):
-            representation = representation + 'Error: url present\n'
-        elif self.url is None and self.text_type is (TextType.LINK or TextType.url):
-            representation = representation + 'Error: url missing\n'
         return representation
 
 
