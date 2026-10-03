@@ -11,8 +11,9 @@
 
 import unittest
 from textnode import TextType, TextNode, text_node_to_html_node
-from convert_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
-
+from convert_markdown import extract_markdown_images, extract_markdown_links
+from convert_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_link
+from convert_markdown import text_to_textnodes, markdown_to_blocks
 
 class TestConvertMarkdown(unittest.TestCase):
 
@@ -203,3 +204,59 @@ class TestConvertMarkdown(unittest.TestCase):
             TextNode("mine!", TextType.BOLD)
         ]
         self.assertEqual(text_to_input_result, expected_result)
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_markdown_to_blocks_long(self):
+        md_long = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+This is another paragraph.
+
+
+- This is a list
+- with items
+
+
+
+
+
+
+    This shouldn't have a tab. And this sentence should be included too, with [a link.](http://address.fake)
+And this sentence should be a part of the same paragraph.
+
+
+This one should not.
+        And this should be here.
+"""
+        blocks = markdown_to_blocks(md_long)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line\nThis is another paragraph.",
+                "- This is a list\n- with items",
+                "This shouldn't have a tab. And this sentence should be included too, with [a link.](http://address.fake)\nAnd this sentence should be a part of the same paragraph.",
+                "This one should not.\n        And this should be here."
+            ],
+        )
