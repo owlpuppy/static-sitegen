@@ -1,7 +1,18 @@
 # src/convert_markdown.py
 
 import re
+from enum import Enum
 from textnode import TextType, TextNode
+
+# common
+
+class BlockType(Enum):
+    PARA = 'paragraph'
+    HEADING = 'heading'
+    CODE = 'code'
+    QUOTE = 'quote'
+    UL = 'unordered_list'
+    OL =  'ordered_list'
 
 # split nodes subfunctions
 
@@ -105,14 +116,14 @@ def split_nodes_delimiter(old_nodes: list[TextNode], text_type: TextType) -> lis
 
     return new_nodes
 
-# primary function for processing blocks
+# primary function for creating nodes
 
 def text_to_textnodes(text: str) -> list[TextNode]:
     text_nodes = [TextNode(text, TextType.TEXT)]
     processed_nodes = split_nodes_delimiter(split_nodes_delimiter(split_nodes_delimiter(split_nodes_image(split_nodes_link(text_nodes)), TextType.CODE), TextType.ITALIC), TextType.BOLD)
     return processed_nodes
 
-# covert markdown to blocks
+# block level functions
 
 def markdown_to_blocks(markdown: str) -> list[str]:
     markdown_blocks = []
@@ -123,3 +134,27 @@ def markdown_to_blocks(markdown: str) -> list[str]:
             markdown_blocks.append(block_raw)
 
     return markdown_blocks
+
+def block_to_block_type(block: str) -> BlockType:
+
+    if re.match(r"^#{1,6} .", block):
+        return BlockType.HEADING
+    if block.startswith("```\n") and block.endswith("```"):
+        return BlockType.CODE
+    if block.startswith(">"):
+        new_block = block[1:]
+        if len(new_block.strip()) > 0:
+            return BlockType.QUOTE
+    if all(line.startswith("- ") for line in block.splitlines()):
+        return BlockType.UL
+    if block.startswith("1. "):
+        block_split = block.splitlines()
+        lines = len(block_split)
+        count = 0
+        for line in block_split:
+            count += 1
+            if not line.startswith(f"{count}. "):
+                break
+        if lines == count:
+            return BlockType.OL
+    return BlockType.PARA
