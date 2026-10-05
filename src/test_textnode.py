@@ -55,8 +55,15 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("Am I Bold?", TextType.BOLD)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.value, "Am I Bold?")
-        self.assertEqual(html_node.tag, "b")
-        self.assertEqual(html_node.to_html(), "<b>Am I Bold?</b>")
+        self.assertEqual(html_node.tag, "strong")
+        self.assertEqual(html_node.to_html(), "<strong>Am I Bold?</strong>")
+
+    def test_italic(self):
+        node = TextNode("Am I Bold?", TextType.ITALIC)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.value, "Am I Bold?")
+        self.assertEqual(html_node.tag, "em")
+        self.assertEqual(html_node.to_html(), "<em>Am I Bold?</em>")
 
     def test_link(self):
         node = TextNode("Am I LINKED?", TextType.LINK, "the_url")

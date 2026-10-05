@@ -2,9 +2,9 @@
 #
 from textnode import TextType, TextNode, text_node_to_html_node
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from convert_markdown import extract_markdown_images, extract_markdown_links
-from convert_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
-from convert_markdown import BlockType, markdown_to_blocks, block_to_block_type
+from convert_markdown_inline import extract_markdown_images, extract_markdown_links
+from convert_markdown_inline import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from convert_markdown_block import BlockType, markdown_to_blocks, block_to_block_type, markdown_to_html_node
 
 def main():
 
@@ -66,6 +66,19 @@ def main():
     ]
     for block in blocks:
             print(block_to_block_type(block))
+
+    md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+"""
+
+    node = markdown_to_html_node(md)
+    html = node.to_html()
+    print(f"\nHTML:\n\n{html}")
 
 
 if __name__ == "__main__":

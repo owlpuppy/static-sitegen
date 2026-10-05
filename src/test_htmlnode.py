@@ -55,12 +55,12 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_repr_with_properties(self):
         node = repr(HTMLNode("z", "aValue", None, {"one": "property", "two": "property"}))
-        text = "HTMLNode(z, aValue, None, {'one': 'property', 'two': 'property'}, False)"
+        text = "HTMLNode(z, aValue, children: None, {'one': 'property', 'two': 'property'}, False)"
         self.assertEqual(node, text)
 
     def test_repr_with_children(self):
         node = repr(HTMLNode("hmmm", None, [HTMLNode(None, 'someText'), HTMLNode(None, 'SomeText')], None))
-        text = "HTMLNode(hmmm, None, [HTMLNode(None, someText, None, None, False), HTMLNode(None, SomeText, None, None, False)], None, False)"
+        text = "HTMLNode(hmmm, None, children: [HTMLNode(None, someText, children: None, None, False), HTMLNode(None, SomeText, children: None, None, False)], None, False)"
         self.assertEqual(node, text)
 
     # leafnode tests

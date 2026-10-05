@@ -1,18 +1,9 @@
 # src/convert_markdown.py
 
 import re
-from enum import Enum
-from textnode import TextType, TextNode
 
-# common
-
-class BlockType(Enum):
-    PARA = 'paragraph'
-    HEADING = 'heading'
-    CODE = 'code'
-    QUOTE = 'quote'
-    UL = 'unordered_list'
-    OL =  'ordered_list'
+from textnode import TextType, TextNode, text_node_to_html_node
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 # split nodes subfunctions
 
@@ -41,6 +32,10 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
                 for i in range(node_image_count):
                     image_alt = node_images[i][0]
                     image_link = node_images[i][1]
+                    if image_link == '':
+                        raise ValueError("image address is empty")
+                    if image_alt == '':
+                        raise ValueError("image alt is empty")
                     node_sections = node_raw.split(f"![{image_alt}]({image_link})", 1)
                     if node_sections[0] != '':
                         new_nodes.append(TextNode(node_sections[0], node.text_type))
@@ -65,6 +60,10 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
                 for i in range(node_link_count):
                     link_text = node_links[i][0]
                     link_address = node_links[i][1]
+                    if link_address == "":
+                        raise ValueError("link address is empty")
+                    if link_text == "":
+                        raise ValueError("link text is empty")
                     node_sections = node_raw.split(f"[{link_text}]({link_address})", 1)
                     if node_sections[0] != '':
                         new_nodes.append(TextNode(node_sections[0], node.text_type))
@@ -119,42 +118,10 @@ def split_nodes_delimiter(old_nodes: list[TextNode], text_type: TextType) -> lis
 # primary function for creating nodes
 
 def text_to_textnodes(text: str) -> list[TextNode]:
-    text_nodes = [TextNode(text, TextType.TEXT)]
-    processed_nodes = split_nodes_delimiter(split_nodes_delimiter(split_nodes_delimiter(split_nodes_image(split_nodes_link(text_nodes)), TextType.CODE), TextType.ITALIC), TextType.BOLD)
-    return processed_nodes
-
-# block level functions
-
-def markdown_to_blocks(markdown: str) -> list[str]:
-    markdown_blocks = []
-    markdown_blocks_raw = markdown.split("\n\n")
-    for block_raw in markdown_blocks_raw:
-        block_raw = block_raw.strip()
-        if block_raw != '':
-            markdown_blocks.append(block_raw)
-
-    return markdown_blocks
-
-def block_to_block_type(block: str) -> BlockType:
-
-    if re.match(r"^#{1,6} .", block):
-        return BlockType.HEADING
-    if block.startswith("```\n") and block.endswith("```"):
-        return BlockType.CODE
-    if block.startswith(">"):
-        new_block = block[1:]
-        if len(new_block.strip()) > 0:
-            return BlockType.QUOTE
-    if all(line.startswith("- ") for line in block.splitlines()):
-        return BlockType.UL
-    if block.startswith("1. "):
-        block_split = block.splitlines()
-        lines = len(block_split)
-        count = 0
-        for line in block_split:
-            count += 1
-            if not line.startswith(f"{count}. "):
-                break
-        if lines == count:
-            return BlockType.OL
-    return BlockType.PARA
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_delimiter(nodes, TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, TextType.BOLD)
+    return nodes

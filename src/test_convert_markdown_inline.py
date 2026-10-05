@@ -11,16 +11,16 @@
 
 import unittest
 from textnode import TextType, TextNode, text_node_to_html_node
-from convert_markdown import extract_markdown_images, extract_markdown_links
-from convert_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
-from convert_markdown import BlockType, markdown_to_blocks, block_to_block_type
+from convert_markdown_inline import extract_markdown_images, extract_markdown_links
+from convert_markdown_inline import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 
-class TestConvertMarkdown(unittest.TestCase):
 
-#split nodes delimiter tests
+class TestConvertMarkdownInline(unittest.TestCase):
+
+    # split nodes delimiter tests
 
     def test_convert_markdown_long(self):
-        node = TextNode("`This is a test`, and `only` a `test`. This is text with a `code block` word. Wow this `might be hard. `", TextType.TEXT)
+        node = TextNode("`This is a test`, and `only` a `test`. This is text with a `code block` word.\nWow this `might be hard. `", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], TextType.CODE)
         node2 = [TextNode('This is a test', TextType.CODE),
             TextNode(', and ', TextType.TEXT),
@@ -29,7 +29,7 @@ class TestConvertMarkdown(unittest.TestCase):
             TextNode('test', TextType.CODE),
             TextNode('. This is text with a ', TextType.TEXT),
             TextNode('code block', TextType.CODE),
-            TextNode(' word. Wow this ', TextType.TEXT),
+            TextNode(' word.\nWow this ', TextType.TEXT),
             TextNode('might be hard. ', TextType.CODE)]
         self.assertEqual(new_nodes, node2)
 
@@ -166,6 +166,30 @@ class TestConvertMarkdown(unittest.TestCase):
         ]
         self.assertEqual(result2, expecte2)
 
+    def test_split_node_link_erraddr(self):
+        with self.assertRaises(ValueError) as raised:
+            node = [TextNode("[This is alt text.]()", TextType.TEXT)]
+            new_node = split_nodes_link(node)
+        self.assertEqual(str(raised.exception), 'link address is empty')
+
+    def test_split_node_link_error_text(self):
+        with self.assertRaises(ValueError) as raised:
+            node = TextNode("[](an_address)", TextType.TEXT)
+            new_node = split_nodes_link([node])
+        self.assertEqual(str(raised.exception), 'link text is empty')
+
+    def test_split_node_image_error_address(self):
+        with self.assertRaises(ValueError) as raised:
+            node = TextNode("![alt]()", TextType.TEXT)
+            new_node = split_nodes_image([node])
+        self.assertEqual(str(raised.exception), 'image address is empty')
+
+    def test_split_node_image_error_alt(self):
+        with self.assertRaises(ValueError) as raised:
+            node = TextNode("![](address)", TextType.TEXT)
+            new_node = split_nodes_image([node])
+        self.assertEqual(str(raised.exception), 'image alt is empty')
+
         # text to textnode tests
 
     def test_text_to_textnode_example(self):
@@ -204,209 +228,3 @@ class TestConvertMarkdown(unittest.TestCase):
             TextNode("mine!", TextType.BOLD)
         ]
         self.assertEqual(text_to_input_result, expected_result)
-
-    def test_markdown_to_blocks(self):
-        md = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-- This is a list
-- with items
-"""
-        blocks = markdown_to_blocks(md)
-        self.assertEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                "- This is a list\n- with items",
-            ],
-        )
-
-    def test_markdown_to_blocks_long(self):
-        md_long = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-This is another paragraph.
-
-
-- This is a list
-- with items
-
-
-
-
-
-
-    This shouldn't have a tab. And this sentence should be included too, with [a link.](http://address.fake)
-And this sentence should be a part of the same paragraph.
-
-
-This one should not.
-        And this should be here.
-"""
-        blocks = markdown_to_blocks(md_long)
-        self.assertEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line\nThis is another paragraph.",
-                "- This is a list\n- with items",
-                "This shouldn't have a tab. And this sentence should be included too, with [a link.](http://address.fake)\nAnd this sentence should be a part of the same paragraph.",
-                "This one should not.\n        And this should be here."
-            ],
-        )
-
-    def test_block_to_block_type_headings(self):
-        blocks = [
-            "# text",
-            "## moretext//\4fghjddv q",
-            "### stillmoretext",
-            "#### b",
-            "##### five",
-            "###### six",
-            "####### seven",
-            "### ",
-            "#3",
-            " #",
-            "`# one",
-            "> # sssss",
-            "\n# sssss"
-        ]
-        results = []
-        for block in blocks:
-            results.append(block_to_block_type(block))
-        expected = [
-            BlockType.HEADING,
-            BlockType.HEADING,
-            BlockType.HEADING,
-            BlockType.HEADING,
-            BlockType.HEADING,
-            BlockType.HEADING,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.QUOTE,
-            BlockType.PARA
-        ]
-        self.assertEqual(results, expected)
-
-    def test_block_to_block_type_code(self):
-        blocks = [
-            "```\nsometest```",
-            "```\nsometest``",
-            "``\nsometest```",
-            "```sometest```",
-            " ```\nsometest```",
-            "```\nsometest``` ",
-            "```\nsometest\nsomemoretest```",
-            "```\n   sometest   ```",
-            "```\nsometest   ``   ```",
-            "```\n### heading```",
-            "# one",
-            ">```\nsometest``` # sssss"
-        ]
-        results = []
-        for block in blocks:
-            results.append(block_to_block_type(block))
-        expected = [
-            BlockType.CODE,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.CODE,
-            BlockType.CODE,
-            BlockType.CODE,
-            BlockType.CODE,
-            BlockType.HEADING,
-            BlockType.QUOTE
-        ]
-        self.assertEqual(results, expected)
-
-    def test_block_to_block_type_quote(self):
-        blocks = [
-            "```\n> quote```",
-            "```\n>quote``",
-            "## >me",
-            "> ",
-            ">text ",
-            ">   text",
-            "> text",
-            "\n> text"
-        ]
-        results = []
-        for block in blocks:
-            results.append(block_to_block_type(block))
-        expected = [
-            BlockType.CODE,
-            BlockType.PARA,
-            BlockType.HEADING,
-            BlockType.PARA,
-            BlockType.QUOTE,
-            BlockType.QUOTE,
-            BlockType.QUOTE,
-            BlockType.PARA
-        ]
-        self.assertEqual(results, expected)
-
-    def test_block_to_block_type_ul(self):
-        blocks = [
-            "\n- an item",
-            "- an item",
-            "- an item\n- an item",
-            "- an item\n- an item\n- an item",
-            " - an item\n- an item\n- an item",
-            "- an item\n- an item\n - an item",
-            "- an item\n - an item\n- an item",
-            "- an item\n\n- an item\n- an item"
-        ]
-        results = []
-        for block in blocks:
-            results.append(block_to_block_type(block))
-        expected = [
-            BlockType.PARA,
-            BlockType.UL,
-            BlockType.UL,
-            BlockType.UL,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA
-        ]
-        self.assertEqual(results, expected)
-
-    def test_block_to_block_type_ol(self):
-        blocks = [
-            "\n- an item",
-            "1- an item",
-            "1.- an item",
-            "1. an item\n- an item\n- an item",
-            "1. an item\n2. an item\n3. an item",
-            "\n1. an item\n2. an item\n3. an item",
-            "1. an item\n3. an item\n2. an item",
-            "2. an item\n3. an item",
-            "1. an item\n2. an item\n"
-        ]
-        results = []
-        for block in blocks:
-            results.append(block_to_block_type(block))
-        expected = [
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.OL,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.PARA,
-            BlockType.OL
-        ]
-        self.assertEqual(results, expected)

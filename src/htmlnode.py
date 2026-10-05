@@ -51,12 +51,7 @@ class HTMLNode:
         return False
 
     def __repr__(self):
-        representation = f'HTMLNode({self.tag}, {self.value}, {self.children}, {self.props}, {self.no_close})'
-        if self.value is not None and self.children is not None:
-            representation = representation + '\nError: value or children'
-        if self.props is not None and self.tag is None:
-            representation = representation + '\nError: orphan properties'
-        return representation
+        return f'HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props}, {self.no_close})'
 
 class LeafNode(HTMLNode):
     def __init__(self, tag: str|None,
@@ -86,10 +81,7 @@ class LeafNode(HTMLNode):
 
     @override
     def __repr__(self):
-        representation = f'LeafNode(HTMLNode)({self.tag}, {self.value}, {self.props}, {self.no_close})'
-        if self.props is not None and self.tag is None:
-            representation = representation + '\nError: orphan properties'
-        return representation
+        return f'LeafNode(HTMLNode)({self.tag}, {self.value}, {self.props}, {self.no_close})'
 
 class ParentNode(HTMLNode):
     def __init__(self, tag: str,
@@ -126,9 +118,4 @@ class ParentNode(HTMLNode):
 
     @override
     def __repr__(self):
-        representation = f'ParentNode(HTMLNode)({self.tag}, {self.children}, {self.props}, {self.no_close})'
-        if self.tag is None:
-            representation = representation + '\nError: tag required'
-        if self.children is None:
-            representation = representation + '\nError: child nodes required'
-        return representation
+        return f'ParentNode(HTMLNode)({self.tag}, children: {self.children}, {self.props}, {self.no_close})'

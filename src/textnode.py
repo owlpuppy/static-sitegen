@@ -36,9 +36,9 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
         case TextType.BOLD:
-            return LeafNode("b", text_node.text)
+            return LeafNode("strong", text_node.text)
         case TextType.ITALIC:
-            return LeafNode("i", text_node.text)
+            return LeafNode("em", text_node.text)
         case TextType.CODE:
             return LeafNode("code", text_node.text)
         case TextType.LINK:
