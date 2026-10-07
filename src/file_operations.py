@@ -1,4 +1,4 @@
-# src/file_operations.py
+# static-sitegen src/file_operations.py
 
 import os
 import shutil
@@ -7,10 +7,10 @@ import logging
 ABSPATH = os.path.abspath("./")
 
 logging.basicConfig(
-    filename=os.path.join(ABSPATH, "logs", "fileops.log"),      # Name of the log file
+    filename=os.path.join(ABSPATH, "logs", "static_sitegen.log"),      # Name of the log file
     filemode='a',                # 'a' to append, 'w' to overwrite
     format='%(asctime)s %(levelname)s: %(funcName)s: %(message)s',  # Log message format
-    level=logging.DEBUG          # Minimum log level to capture
+    level=logging.INFO          # Minimum log level to capture
 )
 
 def duplicate_files(current_from: str = '', current_to: str = ''):
@@ -26,7 +26,6 @@ def duplicate_files(current_from: str = '', current_to: str = ''):
     write_to = os.path.join(ABSPATH, destination_dir)
 
     if current_from != '' and current_to != '':
-        print(f'from {current_from}, to {current_to}')
         write_from = os.path.join(write_from, current_from)
         write_to = os.path.join(write_to, current_to)
     else:
@@ -51,11 +50,9 @@ def duplicate_files(current_from: str = '', current_to: str = ''):
             if os.path.isfile(next):
                 file_to_copy = os.path.join(write_from, file)
                 shutil.copy(file_to_copy, write_to)
-                #print(f"copy {file} from {write_from} to {write_to}")
-                logging.info(f'copy "{file}" from "{write_from}"\n          to "{write_to}"')
+                logging.info(f'copy "{file}" from "{write_from}" to "{write_to}"')
             else:
                 new_dir = os.path.join(write_to, file)
-                #print(f"make dir in {write_to} named {file}")
                 os.mkdir(new_dir)
                 logging.info(f'make dir in "{write_to}" named "{file}"')
                 from_next = os.path.join(current_from, file)

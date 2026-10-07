@@ -9,3 +9,5 @@ storage/
 public/
 logs/
 static/
+content/
+template.html

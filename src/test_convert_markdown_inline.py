@@ -1,4 +1,4 @@
-#static-sitegen src/text_convert_markdown
+# static-sitegen src/text_convert_markdown
 #
 #
 #

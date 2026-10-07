@@ -1,4 +1,4 @@
-# src/convert_markdown.py
+# static-sitegen src/convert_markdown.py
 
 import re
 
