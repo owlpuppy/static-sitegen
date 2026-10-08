@@ -1,4 +1,4 @@
-# static-sitegen src/generate_pages
+# static-sitegen src/generate_html
 #
 #
 #
@@ -11,7 +11,7 @@
 
 import unittest
 
-from generate_pages import extract_title
+from generate_html import extract_title
 
 class TestGeneratePages(unittest.TestCase):
 

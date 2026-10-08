@@ -3,6 +3,8 @@
 import re
 from enum import Enum
 
+import common
+
 from textnode import TextType, TextNode, text_node_to_html_node
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from convert_markdown_inline import text_to_textnodes

@@ -1,6 +1,9 @@
 # static-sitegen src/textnode
 
 from enum import Enum
+
+import common
+
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TextType(Enum):

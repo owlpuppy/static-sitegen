@@ -2,6 +2,8 @@
 
 import re
 
+import common
+
 from textnode import TextType, TextNode, text_node_to_html_node
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
