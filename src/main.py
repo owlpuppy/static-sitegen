@@ -16,8 +16,12 @@ logging.basicConfig(
 from file_operations import duplicate_files, generate_pages
 
 def main():
+    basepath = sys.argv[1] if len(sys.argv) > 1 else '/'
+
+
+
     duplicate_files()
-    generate_pages("template.html")
+    generate_pages(basepath, "template.html")
 
 if __name__ == "__main__":
     main()

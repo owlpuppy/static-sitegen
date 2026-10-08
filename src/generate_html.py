@@ -15,7 +15,7 @@ def extract_title(markdown: str) -> str:
 
 # primary functions
 
-def generate_html_doc(template_file: str, markdown_file: str, destination_file: str = '') -> None:
+def generate_html_doc(basepath, template_file: str, markdown_file: str, destination_file: str = '') -> None:
 
     try:
         with open(markdown_file, "r") as file:
@@ -47,6 +47,8 @@ def generate_html_doc(template_file: str, markdown_file: str, destination_file: 
 
     html_doc = template.replace(title_placeholder, title)
     html_doc = html_doc.replace(content_placeholder, content)
+    html_doc = html_doc.replace('href="/', f'href="{basepath}')
+    html_doc = html_doc.replace('src="/', f'src="{basepath}')
 
     try:
         with open(destination_file, "w") as file_to_write:

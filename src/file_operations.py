@@ -8,7 +8,7 @@ from generate_html import generate_html_doc
 
 def duplicate_files(current_from: str = '', current_to: str = ''):
     source_dir = "static"
-    destination_dir = "public"
+    destination_dir = common.BUILD_DEST
     msg_from = os.path.join(current_from, source_dir)
     msg_to = os.path.join(current_to, destination_dir)
 
@@ -60,9 +60,9 @@ def duplicate_files(current_from: str = '', current_to: str = ''):
         common.logger.error(f'{e}, ending...')
         raise
 
-def generate_pages(template_path: str, current_from: str = '', current_to: str = '') -> None:
+def generate_pages(basepath, template_path: str, current_from: str = '', current_to: str = '') -> None:
     source_dir = "content"
-    destination_dir = "public"
+    destination_dir = common.BUILD_DEST
     markdown_ext = '.md'
     html_ext = '.html'
     template_source = os.path.join(common.ABSPATH, template_path)
@@ -104,13 +104,13 @@ def generate_pages(template_path: str, current_from: str = '', current_to: str =
                         common.logger.info(f'"{write_to}" not present, creating...')
                     print(f'Generating page from "{current_md}" to "{current_html}" using "{template_path}" as template...')
                     common.logger.info(f'Generating page from "{next}" to "{next_destination}" using "{template_source}" as template...')
-                    generate_html_doc(template_source, next, next_destination)
+                    generate_html_doc(basepath, template_source, next, next_destination)
                 else:
                     common.logger.warning('"{next}" is not a markdown file, file ignored')
             else:
                 from_next = os.path.join(current_from, file)
                 to_next = os.path.join(current_to, file)
-                generate_pages(template_path, from_next, to_next)
+                generate_pages(basepath, template_path, from_next, to_next)
 
     except Exception as e:
         common.logger.error(f'{e}, ending...')

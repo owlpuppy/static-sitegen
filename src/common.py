@@ -4,6 +4,7 @@ import os
 import logging
 
 ABSPATH = os.path.abspath("./")
+BUILD_DEST = 'docs'
 
 logger = logging.getLogger("static-sitegen")
 
