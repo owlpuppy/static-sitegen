@@ -40,7 +40,7 @@ _# nor this one I put here_
         test_escape = '# &"' + "'<>test"
         markdown.extend(["#        hihi        ", "not this\n\n#      but this one                      ", test_escape])
         extracted = list(map(extract_title, markdown))
-        expected = ['first heading', 'second heading', 'third', 'second heading', 'but this one', 'but this one', 'hihi', 'but this one', "&amp;&quot;&#039;&lt;&gt;test"]
+        expected = ['first heading', 'second heading', 'third', 'second heading', 'but this one', 'but this one', 'hihi', 'but this one', "&amp;&quot;&#x27;&lt;&gt;test"]
         self.assertEqual(extracted, expected)
 
     def test_extract_title_error(self):
@@ -48,3 +48,6 @@ _# nor this one I put here_
             markdown = '#one\n\n**# two**\n\n     # three\n\n## four'
             extracted = extract_title(markdown)
         self.assertEqual(str(raised.exception), 'top level header is missing from markdown')
+
+if __name__ == "__main__":
+    unittest.main()

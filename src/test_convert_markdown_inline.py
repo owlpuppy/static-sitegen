@@ -228,3 +228,6 @@ class TestConvertMarkdownInline(unittest.TestCase):
             TextNode("mine!", TextType.BOLD)
         ]
         self.assertEqual(text_to_input_result, expected_result)
+
+if __name__ == "__main__":
+    unittest.main()

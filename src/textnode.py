@@ -1,6 +1,8 @@
 # static-sitegen src/textnode
 
+import html
 from enum import Enum
+from urllib.parse import quote
 
 import common
 
@@ -37,16 +39,16 @@ class TextNode:
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
         case TextType.TEXT:
-            return LeafNode(None, text_node.text)
+            return LeafNode(None, html.escape(text_node.text))
         case TextType.BOLD: #change to strong
-            return LeafNode("b", text_node.text)
+            return LeafNode("strong", html.escape(text_node.text))
         case TextType.ITALIC: #change to em
-            return LeafNode("i", text_node.text)
+            return LeafNode("em", html.escape(text_node.text))
         case TextType.CODE:
             return LeafNode("code", text_node.text)
         case TextType.LINK:
-            return LeafNode("a", text_node.text, {"href": text_node.url})
+            return LeafNode("a", html.escape(text_node.text), {"href": text_node.url})
         case TextType.IMG:
-            return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text}, True)
+            return LeafNode("img", "", {"src": text_node.url, "alt": html.escape(text_node.text)}, True)
         case _:
             raise TypeError("invalid TextType")

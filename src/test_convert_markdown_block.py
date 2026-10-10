@@ -309,4 +309,7 @@ the **same** even with inline stuff
         html = node.to_html()
         self.assertEqual(html, compare)
 
-           # "<div><p>This is <strong>bolded</strong> paragraph text in a p tag here</p><p>This is another paragraph with <em>italic</em> text and <code>code</code> here</p><ul><li>first</li><li>second</li></ul><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+
+
+if __name__ == "__main__":
+    unittest.main()

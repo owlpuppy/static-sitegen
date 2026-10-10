@@ -13,15 +13,15 @@ logging.basicConfig(
     level=logging.INFO          # Minimum log level to capture
 )
 
-from file_operations import duplicate_files, generate_pages
+from file_operations import create_site
 
 def main():
-    basepath = sys.argv[1] if len(sys.argv) > 1 else '/'
 
+    header = '-----------------------------\n--- Static Site Generator ---\n-----------------------------'
 
+    common.console_print(header, True)
 
-    duplicate_files()
-    generate_pages(basepath, "template.html")
+    create_site()
 
 if __name__ == "__main__":
     main()

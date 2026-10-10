@@ -1,21 +1,22 @@
 # static-sitegen src/generate_pages.py
 
+import html
+
 import common
 from convert_markdown_block import markdown_to_html_node
 
 # helper functions
 
 def extract_title(markdown: str) -> str:
-    markdown = common.html_specialchars_encode(markdown)
     markdown_split = markdown.splitlines()
     for line in markdown_split:
         if line.startswith('# '):
-            return line[2:].strip()
+            return html.escape(line[2:].strip())
     raise ValueError("top level header is missing from markdown")
 
 # primary functions
 
-def generate_html_doc(basepath, template_file: str, markdown_file: str, destination_file: str = '') -> None:
+def generate_html_doc(template_file: str, markdown_file: str, destination_file: str = '') -> None:
 
     try:
         with open(markdown_file, "r") as file:
@@ -44,6 +45,8 @@ def generate_html_doc(basepath, template_file: str, markdown_file: str, destinat
     if content_placeholder not in template:
         common.logger.error(f'"{template_file}" does not contain "{content_placeholder}, content will not be present')
         return
+
+    basepath = common.args.build if common.args.build is not None else '/'
 
     html_doc = template.replace(title_placeholder, title)
     html_doc = html_doc.replace(content_placeholder, content)

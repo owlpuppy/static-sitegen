@@ -1,1 +1,1 @@
-python3 src/main.py "/static-sitegen/"
+python3 src/main.py --build "/static-sitegen/"

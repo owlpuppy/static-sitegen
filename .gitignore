@@ -9,4 +9,4 @@ storage/
 logs/
 static/
 content/
-template.html
+public/
