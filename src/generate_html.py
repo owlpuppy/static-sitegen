@@ -46,7 +46,7 @@ def generate_html_doc(template_file: str, markdown_file: str, destination_file: 
         common.logger.error(f'"{template_file}" does not contain "{content_placeholder}, content will not be present')
         return
 
-    basepath = common.args.build if common.args.build is not None else '/'
+    basepath = common._build_basepath
 
     html_doc = template.replace(title_placeholder, title)
     html_doc = html_doc.replace(content_placeholder, content)

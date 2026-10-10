@@ -14,10 +14,10 @@ TEST_DEST = 'public'
 # helper functions
 
 def dest_dir() -> str:
-    return BUILD_DEST if common.args.build else TEST_DEST
+    return BUILD_DEST if common._build_mode else TEST_DEST
 
 def mode_type() -> str:
-    return 'build mode' if common.args.build else 'test mode'
+    return 'build mode' if common._build_mode else 'test mode'
 
 # file ops functions
 
