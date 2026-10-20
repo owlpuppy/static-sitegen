@@ -1,5 +1,5 @@
 # static-sitegen  
-** generate static HTML website using provided files and template **
+> generate static HTML website using provided files and template
 
 This was originally a Boot.dev project, I have made a few modifications.
 
