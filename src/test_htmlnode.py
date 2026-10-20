@@ -1,6 +1,6 @@
 # static-sitegen src/text_htmlnode
 #
-#  Notes: add more parentnode texts, add exception tests to all 30 09 2026
+# Notes: add more parentnode texts, add exception tests to all 30 09 2026
 #
 #
 #
@@ -10,7 +10,11 @@
 #
 
 import unittest
+from unittest.mock import MagicMock
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextType, TextNode, text_node_to_html_node, encode_address
+import common # so we can get common logger
+
 
 class TestHTMLNode(unittest.TestCase):
     #tag, value, children-> list obj, props -> dict str str
@@ -50,6 +54,34 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode("b")
         node2 = HTMLNode("b")
         self.assertEqual(node, node2)
+
+    def test_addr_encode(self):
+        # temp disable logging
+        original_logger = common.logger
+        common.logger = MagicMock()
+        nodes = [TextNode("img one", TextType.IMG, "file://badlink"),
+                TextNode("link one", TextType.LINK, "file://badlink"),
+                TextNode("img two", TextType.IMG, "ftp://badlink"),
+                TextNode("link two", TextType.LINK, "ftp://badlink"),
+                TextNode("img three", TextType.IMG, ""),
+                TextNode("link three", TextType.LINK, ""),
+                TextNode("img four", TextType.IMG, "http://username:password@badsite.com/path"),
+                TextNode("link four", TextType.LINK, "http://username:password@badsite.com/path"),
+                TextNode("img five", TextType.IMG, "http://www.asite.com/~path@here/or_here"),
+                TextNode("link five", TextType.LINK, "http://www.asite.com/~path@here/or_here")]
+        html_nodes = list(map(text_node_to_html_node, nodes))
+        exp_result = [HTMLNode('img', '', None, {'src': 'please replace this text with a valid address', 'alt': 'img one'}, True),
+                    HTMLNode('a', 'link one', None, {'href': 'please replace this text with a valid address'}, False),
+                    HTMLNode('img', '', None, {'src': 'please replace this text with a valid address', 'alt': 'img two'}, True),
+                    HTMLNode('a', 'link two', None, {'href': 'please replace this text with a valid address'}, False),
+                    HTMLNode('img', '', None, {'src': 'please replace this text with a valid address', 'alt': 'img three'}, True),
+                    HTMLNode('a', 'link three', None, {'href': 'please replace this text with a valid address'}, False),
+                    HTMLNode('img', '', None, {'src': 'please replace this text with a valid address', 'alt': 'img four'}, True),
+                    HTMLNode('a', 'link four', None, {'href': 'please replace this text with a valid address'}, False),
+                    HTMLNode('img', '', None, {'src': 'http://www.asite.com/~path%40here/or_here', 'alt': 'img five'}, True),
+                    HTMLNode('a', 'link five', None, {'href': 'http://www.asite.com/~path%40here/or_here'}, False)]
+        self.assertListEqual(html_nodes, exp_result)
+        common.logger = original_logger
 
     # htmlnode tests using repr
 

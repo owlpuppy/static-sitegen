@@ -1,6 +1,6 @@
-#static-sitegen src/text_textnode
+# static-sitegen src/text_textnode
 #
-#
+# add direct encode_address test
 #
 #
 #
@@ -10,7 +10,7 @@
 #
 
 import unittest
-from textnode import TextType, TextNode, text_node_to_html_node
+from textnode import TextType, TextNode, text_node_to_html_node, encode_address
 
 
 class TestTextNode(unittest.TestCase):

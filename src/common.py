@@ -40,9 +40,6 @@ def set_build_basepath(text: str = '/') -> None:
 
 # multiuse functions
 
-def html_specialchars_encode(text: str) -> str:
-    return text.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&#039;").replace("<", "&lt;").replace(">", "&gt;")
-
 def console_print(message: str, override: bool = False) -> None:
     if override:
         message = f'\n{message}'
