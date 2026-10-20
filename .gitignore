@@ -7,6 +7,4 @@
 __pycache__/
 storage/
 logs/
-static/
-content/
 public/
