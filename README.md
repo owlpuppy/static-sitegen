@@ -1,5 +1,5 @@
 # static-sitegen  
-** generate static HTML website using provided files and template **
+> generate static HTML website using provided files and template
 
 This was originally a Boot.dev project, I have made a few modifications.
 
@@ -31,6 +31,7 @@ Shell scripts can be edited to suit the desired outcomes.
 - added automatic creation of public and docs destinations if they are missing
 - added basic escape for urls in textnode
 - changed "b" and "i" tags to "strong" and "em"
+- modified main.sh to start localhost server only if main completes successfully
 
 ## Possible  
 - add filecounts
@@ -38,4 +39,4 @@ Shell scripts can be edited to suit the desired outcomes.
 - add verification of internal links (possible optional verification step)
 - add nested tag parsing
 
-Last updated: 20 October 2026
+Last updated: 29 October 2026
